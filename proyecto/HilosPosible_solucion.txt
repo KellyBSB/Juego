@@ -1,0 +1,12 @@
+
+"""" para el juego
+    t1 = threading.Thread(name="hilo_1",target=player.eventosPlayer1(event))
+    t2 = threading.Thread(name="hilo_2",target=player2.eventosPlayer2(event))
+    player.eventosPlayer1(event)
+    player2.eventosPlayer2(event)
+    # inicio de la ejecucion de los hilos 
+    t1.start()
+    t2.start()
+# instrucciones que indican que deben terminarse los hilos para que el programa continue normalmete hacia abajo
+    t1.join()
+    t2.join()
