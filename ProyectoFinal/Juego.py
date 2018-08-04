@@ -1,13 +1,12 @@
 import pygame
 import random
 import time
-class Cursor(pygame.Rect):
+class Cursor(pygame.Rect):#Clase que los ayuda a reconocer el cursor en la pantalla para interactuar con el (menu)
     def __init__(self):
         pygame.Rect.__init__(self,0,0,1,1)
     def update(self):
         self.left,self.top=pygame.mouse.get_pos()
-
-class Boton(pygame.sprite.Sprite):
+class Boton(pygame.sprite.Sprite):#clase para cosntruir botones(Menu)
     def __init__(self,imagen1,imagen2,x=200,y=200):
         self.imagen_normal=imagen1
         self.imagen_seleccion=imagen2
@@ -20,8 +19,7 @@ class Boton(pygame.sprite.Sprite):
             self.imagen_actual=self.imagen_seleccion
         else: self.imagen_actual=self.imagen_normal
         pantalla.blit(self.imagen_actual,self.rect)
-
-class Imagenes(pygame.sprite.Sprite):
+class Imagenes(pygame.sprite.Sprite):#clase que construye las imagenes usadas (cargar y da formato)
     def __init__(self, imagen):
         #llamar clase padre
         super().__init__() 
@@ -31,23 +29,23 @@ class Imagenes(pygame.sprite.Sprite):
         self.image.set_colorkey((0,0,0))
         #cargar el rectangulo a la imagen para poder analisar colisiones
         self.rect = self.image.get_rect()
-def tiempo():
+def tiempo():#Inicia un reloj que controla el timepo del programa(tiempo global del programa) 
     #contador (tiempo)
     segundos = round(pygame.time.get_ticks()/1000)#medir tiempo
     segundos = "Tiempo: "+str(segundos)#variable que se va a pintar
     contador = fuente1.render(segundos,0,(250,250,250))#superficie que se va a pintar
     return contador
-def pintar_Manzana():
+def pintar_alien():#Funcion para pintar la imagen con la cual se interactua al recogerla dentro dle juego
     bloquear = Imagenes("alien.png")
     bloquear.rect.x = random.randrange(ancho_Pantalla-50)
     bloquear.rect.y = random.randrange(alto_Pantalla-50)
     bloquear_list.add(bloquear)
     all_sprites_list.add(bloquear)
-def iniciar_musica():
+def iniciar_musica():#Funcion para cargar e iniciar la musica de fondo
     #Inicio de musica de fondo
     musica1=pygame.mixer.Sound("MusicaFondo.wav").play()
     return musica1
-def Vertxt():
+def Vertxt():#Funcion para ver los datos contedos dentro del archivo de texto plano
     pantalla.fill((255,255,255))
     archi=open('Puntaje.txt','r')
     puntaj=str(archi.readlines())
@@ -56,12 +54,10 @@ def Vertxt():
     pygame.display.flip()
     archi.close()
     time.sleep(3)
-
-
 def Jugadores():#INICIO JUEGO 2 jUADORES
     fondo = Imagenes("Fondo.jpg")
     all_sprites_list.add(fondo)
-    pintar_Manzana()
+    pintar_alien()
 
     #carga de imagenes con llamado a la funcion init para que cargue la imagen 
     player = Imagenes("Platillo.png")
@@ -140,6 +136,8 @@ def Jugadores():#INICIO JUEGO 2 jUADORES
         #cambio de posiciones de los jugadores en x y y
         player.rect.x = posx
         player.rect.y = posy
+        player2.rect.x = posx2
+        player2.rect.y = posy2
         asteroides.rect.x = astx
         asteroides.rect.y = asty
         asteroides1.rect.x = ast1x
@@ -156,18 +154,29 @@ def Jugadores():#INICIO JUEGO 2 jUADORES
         bloquears_hit_list = pygame.sprite.spritecollide(player, bloquear_list, True)
         bloquears_hit_list2 = pygame.sprite.spritecollide(player2,bloquear_list,True) 
         colisi = pygame.sprite.spritecollide(player,asteroides_list, True)
+        colisi2 = pygame.sprite.spritecollide(player2,asteroides_list, True)
         #incremento de puntajes por colisiones
         for bloquear in bloquears_hit_list:
             puntuacion += 1
-            pintar_Manzana()
+            pintar_alien()
             sonido1.play()
 
         for bloquear in bloquears_hit_list2:
             puntuacion2 +=1
-            pintar_Manzana()
+            pintar_alien()
             sonido1.play()
 
         for bloquear in colisi:
+            archi=open('Puntaje.txt','a')
+            archi.write(punt+"\n")
+            archi.write(punt2+"\n")
+            archi.close()
+            fin_del_juego=True
+        for bloquear in colisi2:
+            archi=open('Puntaje.txt','a')
+            archi.write(punt+"\n")
+            archi.write(punt2+"\n")
+            archi.close()
             fin_del_juego=True
 
         #pintar todos los sprits
@@ -194,7 +203,7 @@ def Jugador():#INICIO JUEGO 1 JUGADOR
     fondo = Imagenes("Fondo.jpg")
     all_sprites_list.add(fondo)
 
-    pintar_Manzana()
+    pintar_alien()
     #carga de imagenes con llamado a la funcion init para que cargue la imagen 
     player = Imagenes("Platillo.png")
     all_sprites_list.add(player)
@@ -277,10 +286,15 @@ def Jugador():#INICIO JUEGO 1 JUGADOR
         #incremento de puntajes por colisiones
         for bloquear in bloquears_hit_list:
             puntuacion += 1
-            pintar_Manzana()
+            pintar_alien()
             sonido1.play()
         for bloquear in colisi:
+            archi=open('Puntaje.txt','a')
+            archi.write(punt+"\n")
+            archi.write(punt2+"\n")
+            archi.close()
             fin_del_juego=True
+            
         #pintar todos los sprits
         all_sprites_list.draw(pantalla)
         #funcion para calcular tiempo
@@ -298,9 +312,7 @@ def Jugador():#INICIO JUEGO 1 JUGADOR
     musica1.stop()
     Menu()
     pygame.quit()
-
-
-def Menu():
+def Menu():#Fcunion encargada de controlar el menu de inicio
     #creo un reloj para controlar los fps
     reloj1=pygame.time.Clock()
 
@@ -356,8 +368,8 @@ def Menu():
         pygame.display.update() #actualizo el display
         
     pygame.quit() 
-
 #---------- INICIO DEL JUEGO-------------
+#Codigo para el inicio del programa y los modulos usados pygame
 #-----iniciar modulos de pygame
 pygame.init()
 #-----tamaño de la ventana 
